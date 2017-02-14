@@ -7,31 +7,55 @@
 var request = require("request");
 
 
-module.exports.sms = function (login, psw, phones, mes, cb) {
+// Конструктор
+module.exports = function Smsc(login, password) {
+	this.login = login;
+	this.password = password;
+};
+
+
+// Отправка CMC
+module.exports.sms = function (login, password, phones, mes, cb) {
 	var url = [
 		"https://smsc.ru/sys/send.php"+
-		"?login="+login+
-		"&psw="+psw+
-		"&phones="+phones+
+		"?login="+login,
+		"&psw="+password,
+		"&phones="+phones,
 		"&mes="+message
-	].join("");
+	];
 	
-	request(url, function (error, response, body) {
+	request(url.join(""), function (error, response, body) {
 		if (typeof cb === "function") cb();
 	});
 };
 
 
+// Звонок
 module.exports.call = function () {
-	//http://smsc.ru/sys/send.php?login=<login>&psw=<password>&phones=<phones>&mes=<message>&call=1
+	var url = [
+		"https://smsc.ru/sys/send.php",
+		"?login="+login,
+		"&psw="+password,
+		"&phones="+phones,
+		"&mes="+message,
+		"&call=1"
+	];
+	
+	request(url.join(""), function (error, response, body) {
+		if (typeof cb === "function") cb();
+	});
 };
 
 
+// Viver сообщение
 module.exports.viber = function () {
 	//
 };
 
 
-module.exports.balance = function () {
-	//
+// Проверка баланса
+module.exports.balance = function (login, password, cb) {
+	request("http://smsc.ru/sys/balance.php?login="+login+"&psw="+password, function (error, response, body) {
+		if (typeof cb === "function") cb(body);
+	});
 };
